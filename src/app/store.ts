@@ -1,11 +1,16 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { transactionsApi } from '../services/transactionsApi';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    [transactionsApi.reducerPath]: transactionsApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(transactionsApi.middleware),
 });
+
+setupListeners(store.dispatch);
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
